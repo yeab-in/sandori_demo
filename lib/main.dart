@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
+
       /// MYHOME -> Splash 변경 : 처음 화면을 스플래시로 보여주기 위함
       home: const Splash(),
     );
