@@ -2,6 +2,7 @@
  시작하기 페이지 25.08.05
 **/
 import 'package:flutter/material.dart';
+import 'login.dart';
 
 class StartPage extends StatefulWidget {
   /// 시작페이지임을 컴퓨터에 선언
@@ -192,9 +193,7 @@ class _StartPageState extends State<StartPage> {
       ),
       /// 하단
       /// 버튼
-
-      const Spacer(),
-
+          const Spacer(),
     Positioned(
     left: 20,
     right: 20,
@@ -203,7 +202,11 @@ class _StartPageState extends State<StartPage> {
       height: 60, // 버튼 높이
       child: ElevatedButton(
         onPressed: () {
-          print("시작하기 버튼 클릭");
+         Navigator.push(
+             context,
+             MaterialPageRoute(builder: (context) => const LoginPage(title: ''),
+             ),
+         );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xCF4EA6AA),

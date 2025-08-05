@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'splash_screen.dart'; /// 스플래시 코드 페이지 연동
+import 'login.dart';
 
 void main() {
   runApp(const MyApp());
