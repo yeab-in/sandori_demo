@@ -11,7 +11,7 @@ class Splash extends StatefulWidget { /// StatefulWidget : 일정시간 후 페�
   _SplashState createState() => _SplashState();
 }
 
-/// 1초 뒤 시작 화면 페이지로 이동
+/// 일정시간 뒤 시작 화면 페이지로 이동
 class _SplashState extends State<Splash> {
   @override
   void initState() {

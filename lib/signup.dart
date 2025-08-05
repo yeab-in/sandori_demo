@@ -22,6 +22,7 @@ class _SignupPageState extends State<SignupPage> {
   bool _agree3 = false;
   bool _agree4 = false;
 
+  /// 아이디 입력 함수
   void _checkIdDuplicate() {
     final id = _idController.text.trim();
     if (id.isEmpty) {
@@ -37,6 +38,7 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
+  //회원가입 진행시 필요한 함수
   void _signup() {
     final name = _nameController.text.trim();
     final id = _idController.text.trim();
@@ -51,8 +53,8 @@ class _SignupPageState extends State<SignupPage> {
       _showMessage('비밀번호가 일치하지 않습니다.');
       return;
     }
-    if (!(_agree1 && _agree2 && _agree3 && _agree4)) {
-      _showMessage('모든 이용약관에 동의해야 합니다.');
+    if (!(_agree1 && _agree2 )) {
+      _showMessage('필수 이용약관에 동의해야 합니다.');
       return;
     }
 
@@ -63,12 +65,15 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      /// 상단
       appBar: AppBar(
         title: const Text('회원가입'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
       ),
+
+      ///MIDDLE
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16), // 전체 패딩
@@ -172,6 +177,7 @@ class _SignupPageState extends State<SignupPage> {
                 ),
                 SizedBox(height: 30),
 
+                /// 하단
                 /// 이용약관 제목
                 Positioned(
                   left: 30,

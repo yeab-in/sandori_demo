@@ -75,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
 
-      /// BODY
+      /// MIDDLE
       body: Stack(
         children: [
           /// 카카오톡 로그인 버튼
