@@ -4,6 +4,7 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:sandori_test/signup.dart';
 
 class LoginPage extends StatefulWidget {
   final String title;
@@ -310,7 +311,7 @@ class _LoginPageState extends State<LoginPage> {
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
                         print("회원가입 클릭됨");
-                        // Navigator.push(context, MaterialPageRoute(builder: (_) => SignUpPage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => SignupPage(title: '',)));
                       },
                   ),
                 ],
