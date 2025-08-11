@@ -1,8 +1,5 @@
-/**
- 스플래시 화면 제작 페이지 25.08.04
- **/
 import 'package:flutter/material.dart';
-import 'start.dart';
+import 'package:sandori_test/start.dart';
 
 /// 스플래시 화면 구성
 class Splash extends StatefulWidget { /// StatefulWidget : 일정시간 후 페이지 넘어가게 도움
@@ -16,50 +13,38 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
-    
+
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const StartPage(title: ' '),
-          ),
+        context,
+        MaterialPageRoute(builder: (context) => const StartPage( ),
+        ),
       );
     });
   }
-  
-  
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold (
 
-        body: Center(
+      body: Center(
         child: Container(
           /// width, height 설정 -> 화면 비율에 맞춰짐
           width: double.infinity,
           height: double.infinity,
-          decoration: const BoxDecoration(
-
-            /// 배경 그라데이션 색으로 설정
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFF74C0C4), //하늘 색
-                Color(0xFFB7D96A), //연두 색
-              ],
-            ),
-          ),
-
-         /// 행렬 설정 -> 로고의 위치 구제적 지정 (세로 방향 중앙)
+         color: Color(0xFF95E0F4),
+          /// 행렬 설정 -> 로고의 위치 구제적 지정 (세로 방향 중앙)
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 300,),
-    Image.asset('assets/logo.png', height: 400,),
-    ],
+              Image.asset('assets/sandori version2.png', height: 225,),
+            ],
           ),
-    ),
         ),
+      ),
     );
   }
 }
