@@ -64,6 +64,8 @@ flutter:
   - assets/kakao.png
   - assets/google.png
   - assets/apple.png
+  - assets/sandori ver1.png
+  - assets/sandori version2.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
