@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sandori_test/start.dart';
 import 'package:sandori_test/signup.dart';
+import 'package:sandori_test/home.dart';
 
 class Loginscreen extends StatefulWidget {
   const Loginscreen({super.key});
@@ -14,31 +14,45 @@ class _LoginscreenState extends State<Loginscreen> {
     'username': TextEditingController(),
     'password': TextEditingController(),
   };
+
   final List<Map<String, dynamic>> fields = [
-    {
-      'label': '아이디',
-      'key': 'username',
-      'obscure': false,
-    },
-    {
-      'label': '비밀번호',
-      'key': 'password',
-      'obscure': true,
-    },
+    {'label': '아이디', 'key': 'username', 'obscure': false},
+    {'label': '비밀번호', 'key': 'password', 'obscure': true},
   ];
+
   @override
-  dispose() {
+  void dispose() {
     for (var controller in controllers.values) {
       controller.dispose();
     }
     super.dispose();
   }
+
+  /// 로그인 버튼 클릭 시
+  void login() {
+    String username = controllers['username']!.text;
+    String password = controllers['password']!.text;
+
+    if (username.isNotEmpty && password.isNotEmpty) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("아이디와 비밀번호를 입력해주세요")),
+      );
+    }
+  }
+
+  void kakaoLogin() => print('카카오로그인');
+  void googleLogin() => print('구글로그인');
+  void appleLogin() => print('애플로그인');
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
-        FocusScope.of(context).unfocus();
-      },
+      onTap: () => FocusScope.of(context).unfocus(),
       behavior: HitTestBehavior.translucent,
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -48,27 +62,23 @@ class _LoginscreenState extends State<Loginscreen> {
               alignment: Alignment.center,
               child: Column(
                 children: [
-                  SizedBox(height: 60),
-
-                  /// 상단 이미지와 텍스트
-                  _Top(),
-
-                  ///중단, 소셜 로그인
+                  const SizedBox(height: 60),
+                  const _Top(),
                   _Middle(
                     onGooglePressed: googleLogin,
                     onApplePressed: appleLogin,
                     onKakaoPressed: kakaoLogin,
                   ),
-                  const OrDivider(), /// 또는 글자 추가
-
-                  ///하단, 회원 아이디로 로그인
+                  const OrDivider(),
                   _Bottom(
                     textTheme: Theme.of(context).textTheme,
                     onPressed: login,
-                    onSignupPressed: (){
+                    onSignupPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => SignupPage(title: ''),),
+                        MaterialPageRoute(
+                          builder: (context) => const SignupPage(title: ''),
+                        ),
                       );
                     },
                     controllers: controllers,
@@ -82,34 +92,18 @@ class _LoginscreenState extends State<Loginscreen> {
       ),
     );
   }
-  ///카카오 로그인 구동
-  void kakaoLogin() {
-    print('카카오로그인');
-  }
-  ///구글 로그인 구동
-  void googleLogin(){
-    print('구글로그인');
-  }
-  ///애플 로그인 구동
-  void appleLogin() {
-    print('애플로그인');
-  }
-
-  /// 로그인 구동
-  void login() {
-  print('아이디로 로그인 시도');
-  }
 }
 
+/// 상단 이미지 및 텍스트
 class _Top extends StatelessWidget {
   const _Top({super.key});
 
   @override
   Widget build(BuildContext context) {
     final mediumText = Theme.of(context).textTheme.displayMedium;
-    final largeText = Theme.of(context).textTheme.displayLarge;
     final titleLarge = Theme.of(context).textTheme.titleLarge;
-    final padding = SizedBox(height: 10);
+    const padding = SizedBox(height: 10);
+
     return Column(
       children: [
         Align(
@@ -120,16 +114,18 @@ class _Top extends StatelessWidget {
         Text('쉽게 로그인하고', style: mediumText?.copyWith(fontSize: 26)),
         padding,
         Text('다양한 서비스를 이용해보세요', style: titleLarge?.copyWith(fontSize: 26)),
-        SizedBox(height: 30),
+        const SizedBox(height: 30),
       ],
     );
   }
 }
 
+/// 중단 소셜 로그인
 class _Middle extends StatelessWidget {
   final VoidCallback onGooglePressed;
   final VoidCallback onApplePressed;
   final VoidCallback onKakaoPressed;
+
   const _Middle({
     required this.onGooglePressed,
     required this.onApplePressed,
@@ -139,25 +135,17 @@ class _Middle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> outlinebutton = [
-      {
-        'Image': 'assets/google.png',
-        'Text': 'Google 로 시작하기',
-        'OnPressed': onGooglePressed,
-      },
-      {
-        'Image': 'assets/apple.png',
-        'Text': 'Apple 로 시작하기',
-        'OnPressed': onApplePressed,
-      },
+    final List<Map<String, dynamic>> outlineButton = [
+      {'Image': 'assets/google.png', 'Text': 'Google 로 시작하기', 'OnPressed': onGooglePressed},
+      {'Image': 'assets/apple.png', 'Text': 'Apple 로 시작하기', 'OnPressed': onApplePressed},
     ];
-    final mediumText = Theme.of(context).textTheme.displayMedium;
+
     return Column(
       children: [
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0XFFFEE500),
-            fixedSize: Size(400, 40),
+            backgroundColor: const Color(0XFFFEE500),
+            fixedSize: const Size(400, 40),
             elevation: 0,
           ),
           onPressed: onKakaoPressed,
@@ -166,39 +154,38 @@ class _Middle extends StatelessWidget {
             children: [
               Align(
                 alignment: Alignment.centerLeft,
-                child: Image.asset('assets/kakao.png',
-                  width: 24,   // 원하는 너비
-                  height: 24, ),
+                child: Image.asset('assets/kakao.png', width: 24, height: 24),
               ),
-              Center(child: Text('카카오톡으로 시작하기',style: TextStyle(fontSize: 18, color: Colors.black))),
+              const Center(
+                child: Text(
+                  '카카오톡으로 시작하기',
+                  style: TextStyle(fontSize: 18, color: Colors.black),
+                ),
+              ),
             ],
           ),
         ),
         Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(
-            children:
-            outlinebutton
+            children: outlineButton
                 .map(
                   (item) => Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    fixedSize: Size(500, 40),
-                  ),
+                  style: OutlinedButton.styleFrom(fixedSize: const Size(500, 40)),
                   onPressed: item['OnPressed'] as VoidCallback,
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: Image.asset(item['Image'],
-                          width: 40,   // 원하는 너비
-                          height: 24,
-                        ),
+                        child: Image.asset(item['Image'], width: 40, height: 24),
                       ),
                       Center(
-                        child: Text(item['Text'], style: TextStyle(fontSize: 18, color: Colors.black),
+                        child: Text(
+                          item['Text'],
+                          style: const TextStyle(fontSize: 18, color: Colors.black),
                         ),
                       ),
                     ],
@@ -214,15 +201,16 @@ class _Middle extends StatelessWidget {
   }
 }
 
+/// "또는" 구분선
 class OrDivider extends StatelessWidget {
   const OrDivider({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 20),
       child: Row(
-        children: const [
+        children: [
           Expanded(child: Divider(thickness: 1, color: Colors.grey)),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 10),
@@ -234,10 +222,12 @@ class OrDivider extends StatelessWidget {
     );
   }
 }
+
+/// 하단 로그인 / 회원가입
 class _Bottom extends StatelessWidget {
   final TextTheme textTheme;
-  final VoidCallback onPressed; // 로그인 버튼
-  final VoidCallback onSignupPressed; // 회원가입 버튼
+  final VoidCallback onPressed;
+  final VoidCallback onSignupPressed;
   final Map<String, TextEditingController> controllers;
   final List<Map<String, dynamic>> fields;
 
@@ -256,7 +246,6 @@ class _Bottom extends StatelessWidget {
       padding: const EdgeInsets.only(top: 0.0),
       child: Column(
         children: [
-          // 아이디 / 비밀번호 필드
           ...fields.map((field) => Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: TextField(
@@ -264,47 +253,35 @@ class _Bottom extends StatelessWidget {
               obscureText: field['obscure'],
               decoration: InputDecoration(
                 labelText: field['label'],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.black),
+                  borderSide: const BorderSide(color: Colors.black),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Color(0xFF84C9DB), width: 2),
+                  borderSide: const BorderSide(color: Color(0xFF84C9DB), width: 2),
                 ),
               ),
             ),
-          )).toList(), // ← map 끝나고 toList() 필수!
-
+          ))
+              .toList(),
           const SizedBox(height: 18),
-
-          // 로그인 버튼
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF84C9DB),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   padding: const EdgeInsets.symmetric(horizontal: 148, vertical: 17),
                 ),
                 onPressed: onPressed,
-                child: const Text(
-                  '로그인하기',
-                  style: TextStyle(fontSize: 20, color: Colors.black),
-                ),
+                child: const Text('로그인하기', style: TextStyle(fontSize: 20, color: Colors.black)),
               ),
             ],
           ),
-
           const SizedBox(height: 10),
-
-          // 회원가입 안내
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
