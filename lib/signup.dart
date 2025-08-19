@@ -9,41 +9,70 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _idController = TextEditingController();
-  final TextEditingController _pwController = TextEditingController();
-  final TextEditingController _pwConfirmController = TextEditingController();
+  String passwordCheckText = '';
 
-  bool _obscurePassword = true;
-  bool _obscureConfirm = true;
+  final List<Map<String, dynamic>> signupFields = [
+    {
+      'header': '이름',
+      'obscure': false,
+      'showicon': false,
+      'controller': TextEditingController(),
+    },
+    {
+      'header': '아이디',
+      'obscure': false,
+      'showicon': false,
+      'controller': TextEditingController(),
+    },
+    {
+      'header': '비밀번호',
+      'obscure': true,
+      'showicon': true,
+      'controller': TextEditingController(),
+    },
+    {
+      'header': '비밀번호 확인',
+      'obscure': true,
+      'showicon': true,
+      'controller': TextEditingController(),
+    },
+  ];
 
-  bool _agree1 = false;
-  bool _agree2 = false;
-  bool _agree3 = false;
-  bool _agree4 = false;
+  final List<Map<String, dynamic>> agreeText = [
+    {'title': '이용 약관 동의(필수)', 'checked': false},
+    {'title': '개인정보 수집 동의(필수)', 'checked': false},
+    {'title': '개인정보 수집 동의(선택)', 'checked': false},
+    {'title': '혜택/알림 정보 수신 동의(선택)', 'checked': false},
+  ];
 
-  /// 아이디 입력 함수
-  void _checkIdDuplicate() {
-    final id = _idController.text.trim();
-    if (id.isEmpty) {
-      _showMessage('아이디를 입력하세요.');
-      return;
-    }
-    _showMessage('아이디 "$id" 는 사용 가능합니다.');
+  @override
+  void initState() {
+    super.initState();
+    signupFields[2]['controller'].addListener(_checkPasswordMatch);
+    signupFields[3]['controller'].addListener(_checkPasswordMatch);
   }
 
-  void _showMessage(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg)),
-    );
+  void _checkPasswordMatch() {
+    final pw = signupFields[2]['controller'].text;
+    final res = signupFields[3]['controller'].text;
+
+    setState(() {
+      if (res.isEmpty) {
+        passwordCheckText = '비밀번호가 다릅니다';
+      } else if (pw == res) {
+        passwordCheckText = '비밀번호가 일치합니다!';
+      } else {
+        passwordCheckText = '비밀번호가 다릅니다';
+      }
+    });
   }
 
-  //회원가입 진행시 필요한 함수
+  /// 회원가입 함수
   void _signup() {
-    final name = _nameController.text.trim();
-    final id = _idController.text.trim();
-    final pw = _pwController.text;
-    final pwConfirm = _pwConfirmController.text;
+    final name = signupFields[0]['controller'].text.trim();
+    final id = signupFields[1]['controller'].text.trim();
+    final pw = signupFields[2]['controller'].text;
+    final pwConfirm = signupFields[3]['controller'].text;
 
     if (name.isEmpty || id.isEmpty || pw.isEmpty || pwConfirm.isEmpty) {
       _showMessage('모든 항목을 입력하세요.');
@@ -53,217 +82,254 @@ class _SignupPageState extends State<SignupPage> {
       _showMessage('비밀번호가 일치하지 않습니다.');
       return;
     }
-    if (!(_agree1 && _agree2 )) {
+    if (!(agreeText[0]['checked'] && agreeText[1]['checked'])) {
       _showMessage('필수 이용약관에 동의해야 합니다.');
       return;
     }
 
     _showMessage('회원가입 성공! 로그인 페이지로 이동합니다.');
-    Navigator.pop(context); // 로그인 페이지로 돌아가기
+    Navigator.pop(context); // 로그인 페이지로 이동
+  }
+
+  void _showMessage(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      /// 상단
-      appBar: AppBar(
-        title: const Text('회원가입'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
+    final line = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 27.0),
+      child: Row(
+        children: const [
+          Expanded(child: Divider(thickness: 1.5, color: Colors.grey)),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text('이용약관', style: TextStyle(color: Colors.grey)),
+          ),
+          Expanded(child: Divider(thickness: 1.5, color: Colors.grey)),
+        ],
       ),
+    );
 
-      ///MIDDLE
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16), // 전체 패딩
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        behavior: HitTestBehavior.translucent,
+        child: SafeArea(
           child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 회원가입 제목
-                Text(
-                  '회원가입',
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+            child: SizedBox(
+              width: double.infinity,
+              child: Column(
+                children: [
+                  /// 상단
+                  const _Top(),
+
+                  /// 텍스트 입력 필드
+                  _TextField(
+                    signupFields: signupFields,
+                    setStateCallback: setState,
+                    passwordCheckText: passwordCheckText,
                   ),
-                ),
-                SizedBox(height: 20),
 
-                // 이름 입력칸
-                TextField(
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    labelText: '이름',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20),
+                  /// 구분선
+                  line,
 
-                /// 아이디 입력 + 중복확인
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _idController,
-                        decoration: InputDecoration(
-                          labelText: '아이디',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    ElevatedButton(
-                      onPressed: _checkIdDuplicate,
-                      child: Text('중복확인'),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
+                  /// 체크 박스
+                  _CheckBox(agreeText: agreeText, setStateCallback: setState),
+                  const SizedBox(height: 30),
 
-                /// 비밀번호 입력칸
-                TextField(
-                  controller: _pwController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    labelText: '비밀번호',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20),
-
-                /// 비밀번호 확인 입력칸
-                TextField(
-                  controller: _pwConfirmController,
-                  obscureText: _obscureConfirm,
-                  decoration: InputDecoration(
-                    labelText: '비밀번호 확인',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureConfirm
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureConfirm = !_obscureConfirm;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-                SizedBox(height: 30),
-
-                /// 하단
-                /// 이용약관 제목
-                Positioned(
-                  left: 30,
-                  top: 230,
-                  right: 30,
-                  child: Row(
-                    children: [
-                      const Expanded(
-                        child: Divider(
-                          color: Colors.grey,
-                          thickness: 1.5,
-                          endIndent: 10,
-                        ),
-                      ),
-                      const Text(
-                        '이용약관',
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
-                      const Expanded(
-                        child: Divider(
-                          color: Colors.grey,
-                          thickness: 1.5,
-                          indent: 10,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20),
-
-
-                /// 체크박스
-                CheckboxListTile(
-                  contentPadding: EdgeInsets.zero,
-                  visualDensity: VisualDensity(vertical: -4), // 위아래 여백 줄이기
-                  value: _agree1,
-                  onChanged: (v) => setState(() => _agree1 = v ?? false),
-                  title: Text('이용약관 동의 (필수)'),
-                ),
-                CheckboxListTile(
-                  contentPadding: EdgeInsets.zero,
-                  visualDensity: VisualDensity(vertical: -4), // 위아래 여백 줄이기
-                  value: _agree2,
-                  onChanged: (v) => setState(() => _agree2 = v ?? false),
-                  title: Text('개인정보 수집 동의 (필수)'),
-                ),
-                CheckboxListTile(
-                  contentPadding: EdgeInsets.zero,
-                  visualDensity: VisualDensity(vertical: -4), // 위아래 여백 줄이기
-                  value: _agree3,
-                  onChanged: (v) => setState(() => _agree3 = v ?? false),
-                  title: Text('개인정보 수집 동의 (선택)'),
-                ),
-                CheckboxListTile(
-                  contentPadding: EdgeInsets.zero,
-                  visualDensity: VisualDensity(vertical: -4), // 위아래 여백 줄이기
-                  value: _agree4,
-                  onChanged: (v) => setState(() => _agree4 = v ?? false),
-                  title: Text('혜택, 알람 정보 수신 동의 (선택)'),
-                ),
-
-                SizedBox(height: 50),
-
-                /// 회원가입 버튼
-                SizedBox(
-                  width: double.infinity,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: _signup,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xCF4EA6AA),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
-                    child: Text(
-                      '회원가입하기',
-                      style:
-                      TextStyle(fontSize: 25,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ],
+                  /// 하단 버튼
+                  _Bottom(onSignupPressed: _signup),
+                ],
+              ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 상단 위젯
+class _Top extends StatelessWidget {
+  const _Top({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final titleLarge = Theme.of(context).textTheme.titleLarge;
+    return Padding(
+      padding: const EdgeInsets.all(36.0),
+      child: Text('회원가입', style: titleLarge?.copyWith(fontSize: 30)),
+    );
+  }
+}
+
+/// 텍스트 필드 위젯
+class _TextField extends StatelessWidget {
+  final List<Map<String, dynamic>> signupFields;
+  final String passwordCheckText;
+  final void Function(void Function()) setStateCallback;
+
+  const _TextField({
+    required this.signupFields,
+    required this.setStateCallback,
+    required this.passwordCheckText,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: signupFields.asMap().entries.map((entry) {
+        int index = entry.key;
+        final item = entry.value;
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                width: 400,
+                height: 60,
+                child: TextField(
+                  controller: item['controller'],
+                  obscureText: item['obscure'],
+                  decoration: InputDecoration(
+                    labelText: item['header'],
+
+                    // 아이디 입력창일 때만 중복확인 버튼
+                    suffixIcon: index == 1
+                        ? TextButton(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text("아이디 사용 가능")),
+                        );
+                      },
+                      style: TextButton.styleFrom(
+                        minimumSize: const Size(0, 0),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: const Text("중복확인"),
+                    )
+                        : item['showicon'] // 비밀번호 칸이면 눈 아이콘
+                        ? IconButton(
+                      onPressed: () {
+                        setStateCallback(() {
+                          signupFields[index]['obscure'] =
+                          !signupFields[index]['obscure'];
+                        });
+                      },
+                      icon: Icon(
+                        item['obscure']
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                      ),
+                    )
+                        : null,
+                    suffixIconConstraints:
+                    const BoxConstraints(minWidth: 0, minHeight: 0),
+                    labelStyle: const TextStyle(color: Colors.black),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide:
+                      const BorderSide(color: Color(0XFF00C4F9)),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            if (index == 3)
+              Text(
+                passwordCheckText,
+                style: TextStyle(
+                  color: passwordCheckText.contains('일치')
+                      ? Colors.blueAccent
+                      : Colors.red,
+                ),
+              ),
+          ],
+        );
+      }).toList(),
+    );
+  }
+}
+
+
+/// 체크박스 위젯
+class _CheckBox extends StatelessWidget {
+  final List<Map<String, dynamic>> agreeText;
+  final void Function(void Function()) setStateCallback;
+  const _CheckBox({
+    required this.agreeText,
+    required this.setStateCallback,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final mediumText = Theme.of(context).textTheme.bodyMedium;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 27.0),
+      child: Column(
+        children: agreeText.asMap().entries.map((entry) {
+          final index = entry.key;
+          final item = entry.value;
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(item['title'], style: mediumText),
+              Checkbox(
+                value: item['checked'],
+                onChanged: (bool? value) {
+                  setStateCallback(() {
+                    agreeText[index]['checked'] = value!;
+                  });
+                },
+                activeColor: Colors.green,
+                checkColor: Colors.white,
+              ),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+/// 하단 버튼 위젯
+class _Bottom extends StatelessWidget {
+  final VoidCallback onSignupPressed;
+  const _Bottom({
+    required this.onSignupPressed,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final mediumText = Theme.of(context).textTheme.bodyMedium;
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xCF4EA6AA),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 120,
+          vertical: 17,
+        ),
+      ),
+      onPressed: onSignupPressed,
+      child: Text(
+        '회원가입하기',
+        style: mediumText?.copyWith(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
