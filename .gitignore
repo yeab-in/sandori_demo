@@ -22,7 +22,6 @@ rad.json
 #Test results file
 TestResults.xml
 
-
 # Miscellaneous
 *.class
 *.log
