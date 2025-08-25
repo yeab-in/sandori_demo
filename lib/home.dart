@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sandori_test/mealscreen.dart'; // MealScreen import
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -104,29 +105,50 @@ class _Grid extends StatelessWidget {
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
         children: [
-          SizedBox(
-              width: 70,
-              height: 70,
-              child: _Card("버스 조회", Icons.directions_bus, "")),
-          SizedBox(
-              width: 70,
-              height: 70,
-              child: _Card("학식 조회", Icons.restaurant_menu, "")),
-          SizedBox(
-              width: 70,
-              height: 70,
-              child: _Card("빈 강의실 조회", Icons.meeting_room, "")),
-          SizedBox(
-              width: 70,
-              height: 70,
-              child: _Card("공지사항", Icons.account_balance, "")),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const BusPage()),
+              );
+            },
+            child: const _Card("버스 조회", Icons.directions_bus, ""),
+          ),
+          InkWell(
+            onTap: () {
+              // MealScreen으로 이동
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MealScreen()),
+              );
+            },
+            child: const _Card("학식 조회", Icons.restaurant_menu, ""),
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const EmptyRoomPage()),
+              );
+            },
+            child: const _Card("빈 강의실 조회", Icons.meeting_room, ""),
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NoticePage()),
+              );
+            },
+            child: const _Card("공지사항", Icons.account_balance, ""),
+          ),
         ],
       ),
     );
   }
 }
 
-///  BottomNavigationBar
+/// BottomNavigationBar
 class _Bottom extends StatefulWidget {
   const _Bottom();
   @override
@@ -141,8 +163,8 @@ class _BottomState extends State<_Bottom> {
     return BottomNavigationBar(
       currentIndex: _currentIndex,
       type: BottomNavigationBarType.fixed,
-      selectedItemColor: Color(0xBE418C8F), // 선택된 아이템 색
-      unselectedItemColor: Colors.grey, // 선택되지 않은 아이템 색
+      selectedItemColor: const Color(0xBE418C8F),
+      unselectedItemColor: Colors.grey,
       onTap: (index) {
         setState(() => _currentIndex = index);
       },
@@ -200,6 +222,43 @@ class _Card extends StatelessWidget {
           ]
         ],
       ),
+    );
+  }
+}
+
+/// 나머지 페이지들
+class BusPage extends StatelessWidget {
+  const BusPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("버스 조회")),
+      body: const Center(child: Text("버스 시간표 표시 예정")),
+    );
+  }
+}
+
+class EmptyRoomPage extends StatelessWidget {
+  const EmptyRoomPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("빈 강의실 조회")),
+      body: const Center(child: Text("빈 강의실 정보 표시 예정")),
+    );
+  }
+}
+
+class NoticePage extends StatelessWidget {
+  const NoticePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("공지사항")),
+      body: const Center(child: Text("공지사항 내용 표시 예정")),
     );
   }
 }
